@@ -1,11 +1,14 @@
+using API_VariasBDs.Servicos;
+using API_VariasBDs.Servicos.Abstracoes;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddTransient<IUserServico, UserServico>();
 
 var app = builder.Build();
 

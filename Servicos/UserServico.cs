@@ -1,4 +1,6 @@
 ﻿using API_VariasBDs.DTOs;
+using API_VariasBDs.Models;
+using API_VariasBDs.Repositorios;
 using API_VariasBDs.Servicos.Abstracoes;
 
 namespace API_VariasBDs.Servicos
@@ -7,7 +9,9 @@ namespace API_VariasBDs.Servicos
     {
         public List<UserDTO> Users()
         {
-            throw new NotImplementedException();
+            var sql = "SELECT Id as IdUser, Nome, [Data], Token FROM BD1.dbo.[User];";
+            var resposta = DapperRepositorio.Query<UserDTO>(sql);
+            return resposta;
         }
     }
 }

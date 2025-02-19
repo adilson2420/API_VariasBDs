@@ -6,7 +6,7 @@
 
         public string Nome { get; set; } = null!;
 
-        public DateOnly Data { get; set; }
+        public DateTime Data { get; set; }
 
         public string? Token { get; set; }
     }
