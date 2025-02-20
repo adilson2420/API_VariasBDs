@@ -17,13 +17,27 @@ namespace API_VariasBDs.Controllers
             _logger = logger;
             _userServico = userServico;
         }
+        [HttpPost("Gerartoken")]
+        public ActionResult<string> GetToken(string nomeBD)
+        {
+            string token = TokenServico.GenerateToken(nomeBD);
+            return Ok(token);
+        }
 
         [HttpGet(Name = "Listar utilizadores")]
         public IActionResult GetUsers()
         {
             try
             {
-                List<UserDTO> users = _userServico.Users();
+                var authorizationHeader = Request.Headers["Authorization"].ToString();
+                if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
+                    return StatusCode(401, "Token não encontrado ou inválido");
+
+                string token = authorizationHeader.Substring("Bearer ".Length).Trim();
+
+                // Extrai o nome da base de dados do token
+                string dbName = TokenHelper.GetDatabaseFromToken(token);
+                List<UserDTO> users = _userServico.Users(dbName);
                 return StatusCode(200, users);
             }
             catch (Exception ex)

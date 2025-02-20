@@ -7,10 +7,10 @@ namespace API_VariasBDs.Servicos
 {
     public class UserServico : IUserServico
     {
-        public List<UserDTO> Users()
+        public List<UserDTO> Users(string nomeBD)
         {
             var sql = "SELECT Id as IdUser, Nome, [Data], Token FROM BD1.dbo.[User];";
-            var resposta = DapperRepositorio.Query<UserDTO>(sql);
+            var resposta = DapperRepositorio.Query<UserDTO>(nomeBD, sql);
             return resposta;
         }
     }

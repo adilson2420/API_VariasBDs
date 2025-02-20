@@ -4,6 +4,6 @@ namespace API_VariasBDs.Servicos.Abstracoes
 {
     public interface IUserServico
     {
-        List<UserDTO> Users();
+        List<UserDTO> Users(string nomeBD);
     }
 }

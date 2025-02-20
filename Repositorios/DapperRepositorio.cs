@@ -1,13 +1,16 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
+using System.Xml.Linq;
 
 namespace API_VariasBDs.Repositorios
 {
     public class DapperRepositorio
     {
-        public static void Execute(string sql, DynamicParameters parameters = null)
+        public static void Execute(string dbName, string sql, DynamicParameters parameters = null)
         {
-            using (SqlConnection connection = new SqlConnection(GetAppSetting("ConnectionStrings:DefaultConnection")))
+            string connectionString = GetAppSetting($"ConnectionStrings:{dbName}");
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 connection.Execute(sql, parameters);
@@ -15,10 +18,14 @@ namespace API_VariasBDs.Repositorios
             }
         }
 
-        public static List<T> Query<T>(string sql, DynamicParameters parameters = null)
+        public static List<T> Query<T>(string dbName, string sql, DynamicParameters parameters = null)
         {
             List<T> result = new List<T>();
-            using (SqlConnection connection = new SqlConnection(GetAppSetting("ConnectionStrings:DefaultConnection")))
+
+            // Obtém a connection string do appsettings.json
+            string connectionString = GetAppSetting($"ConnectionStrings:{dbName}");
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 result = connection.Query<T>(sql, parameters).ToList();
@@ -28,11 +35,12 @@ namespace API_VariasBDs.Repositorios
             return result;
         }
 
-        public static T SingleOrDefault<T>(string sql, DynamicParameters parameters = null)
+        public static T SingleOrDefault<T>(string dbName, string sql, DynamicParameters parameters = null)
         {
             T result = default;
+            string connectionString = GetAppSetting($"ConnectionStrings:{dbName}");
 
-            using (SqlConnection connection = new SqlConnection(GetAppSetting("ConnectionStrings:DefaultConnection")))
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 result = connection.QuerySingleOrDefault<T>(sql, parameters);
