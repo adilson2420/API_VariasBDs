@@ -24,26 +24,56 @@ namespace API_VariasBDs.Controllers
             return Ok(token);
         }
 
-        [HttpGet(Name = "Listar utilizadores")]
-        public IActionResult GetUsers()
+        [HttpGet("dapper", Name = "Listar utilizadores Dapper")]
+        public IActionResult GetUsersDapper()
         {
             try
             {
-                var authorizationHeader = Request.Headers["Authorization"].ToString();
-                if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
-                    return StatusCode(401, "Token não encontrado ou inválido");
-
-                string token = authorizationHeader.Substring("Bearer ".Length).Trim();
-
-                // Extrai o nome da base de dados do token
-                string dbName = TokenHelper.GetDatabaseFromToken(token);
-                List<UserDTO> users = _userServico.Users(dbName);
-                return StatusCode(200, users);
+                var users = _userServico.GetUsersDapper(Request);
+                if (users == null) return StatusCode(404, "Não encontrado Utilizadores!");
+                object obj = new
+                {
+                    StatusCode = 200,
+                    Msg = "Lista de utilizadores com Dapper",
+                    Resposta = users
+                };
+                return StatusCode(200, obj);
             }
             catch (Exception ex)
             {
-                return StatusCode(400, "Falha ao listar users");
+                object obj = new
+                {
+                    StatusCode = 400,
+                    erro = ex.Message,
+                };
+                return StatusCode(400, obj);
             }
         }
+
+        [HttpGet("entity", Name = "Listar utilizadores Entity")]
+        public async Task<IActionResult> GetUsersEntity()
+        {
+            try
+            {
+                List<UserDTO> users = await _userServico.UsersEntity("BD2");
+                object obj = new
+                {
+                    StatusCode = 200,
+                    Msg = "Lista de utilizadores com Entity Core",
+                    Resposta = users
+                };
+                return StatusCode(200, obj);
+            }
+            catch (Exception ex)
+            {
+                object obj = new
+                {
+                    StatusCode = 400,
+                    erro = ex.Message,
+                };
+                return StatusCode(400, obj);
+            }
+        }
+
     }
 }

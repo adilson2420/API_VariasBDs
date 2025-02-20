@@ -24,6 +24,8 @@ namespace API_VariasBDs.Repositorios
 
             // Obtém a connection string do appsettings.json
             string connectionString = GetAppSetting($"ConnectionStrings:{dbName}");
+            if (string.IsNullOrEmpty(connectionString))
+                throw new Exception($"{dbName} não existe em ConnectionStrings");
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
