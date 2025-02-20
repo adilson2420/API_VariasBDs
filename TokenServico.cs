@@ -10,8 +10,6 @@ namespace API_VariasBDs
         public static string GenerateToken(string dbName)
         {
             var secretKey = "super secret key super secret key super secret key super secret key super secret key super secret key super secret key";
-
-            // Tempo atual em segundos (Unix Timestamp)
             var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             var expires = now + 3600;
 
