@@ -6,7 +6,6 @@ namespace API_VariasBDs.Repositorios
     public class DapperRepositorio
     {
         private static readonly string _connectionString;
-
         static DapperRepositorio()
         {
             _connectionString = GetAppSetting("ConnectionStrings:DefaultConnection");
