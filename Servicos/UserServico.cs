@@ -32,7 +32,8 @@ namespace API_VariasBDs.Servicos
 
         public async Task<List<UserDTO>> UsersEntity(string nomeBD)
         {
-            throw new NotImplementedException();
+            // fazer a implementação até 04/03/2025
+            return new List<UserDTO>();
         }
     }
 }
