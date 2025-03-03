@@ -1,49 +1,61 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
+using System.Xml.Linq;
 
 namespace API_VariasBDs.Repositorios
 {
     public class DapperRepositorio
     {
-        private static readonly string _connectionString;
-        static DapperRepositorio()
+        public static void Execute(string dbName, string sql, DynamicParameters parameters = null)
         {
-            _connectionString = GetAppSetting("ConnectionStrings:DefaultConnection");
+            string connectionString = GetAppSetting($"ConnectionStrings:{dbName}");
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                connection.Execute(sql, parameters);
+                connection.Close();
+            }
         }
 
-        public static void Execute(string sql, DynamicParameters? parameters = null)
+        public static List<T> Query<T>(string dbName, string sql, DynamicParameters parameters = null)
         {
-            using var connection = new SqlConnection(_connectionString);
-            connection.Open();
-            connection.Execute(sql, parameters);
-            connection.Close();
-        }
+            List<T> result = new List<T>();
 
-        public static List<T> Query<T>(string sql, DynamicParameters? parameters = null)
-        {
-            using var connection = new SqlConnection(_connectionString);
-            connection.Open();
-            var result = connection.Query<T>(sql, parameters).ToList();
-            connection.Close();
+            // Obtém a connection string do appsettings.json
+            string connectionString = GetAppSetting($"ConnectionStrings:{dbName}");
+            if (string.IsNullOrEmpty(connectionString))
+                throw new Exception($"{dbName} não existe em ConnectionStrings");
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                result = connection.Query<T>(sql, parameters).ToList();
+                connection.Close();
+            }
+
             return result;
         }
 
-        public static T SingleOrDefault<T>(string sql, DynamicParameters? parameters = null)
+        public static T SingleOrDefault<T>(string dbName, string sql, DynamicParameters parameters = null)
         {
-            using var connection = new SqlConnection(_connectionString);
-            connection.Open();
-            var result = connection.QuerySingleOrDefault<T>(sql, parameters);
-            connection.Close();
+            T result = default;
+            string connectionString = GetAppSetting($"ConnectionStrings:{dbName}");
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                result = connection.QuerySingleOrDefault<T>(sql, parameters);
+                connection.Close();
+            }
+
             return result;
         }
 
-        private static string GetAppSetting(string key)
+        public static string GetAppSetting(string value)
         {
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
-                .Build();
-            return configuration[key] ?? string.Empty;
+            IConfiguration conf = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
+            return (conf[value] ?? "");
         }
     }
 }
