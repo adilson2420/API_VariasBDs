@@ -9,7 +9,7 @@ namespace API_VariasBDs
     {
         public static string GenerateToken(string dbName)
         {
-            var secretKey = "super secret key super secret key super secret key super secret key super secret key super secret key super secret key";
+            var secretKey = "gjkjsShadow#ahsajkdakjhdkakiamisoftjkkhaksd2025wwwjkklsd";
             var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             var expires = now + 3600;
 
@@ -24,10 +24,9 @@ namespace API_VariasBDs
             new Claim(JwtRegisteredClaimNames.Exp, expires.ToString(), ClaimValueTypes.Integer64) // Expiração
         };
 
-            // Criando o token
             var token = new JwtSecurityToken(
-                issuer: "MinhaAPI",
-                audience: "MeusClientes",
+                issuer: "ShadowAPI",
+                audience: "Dados",
                 claims: claims,
                 expires: DateTimeOffset.FromUnixTimeSeconds(expires).UtcDateTime,
                 signingCredentials: credentials
