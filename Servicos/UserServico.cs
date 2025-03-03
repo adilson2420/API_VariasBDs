@@ -1,5 +1,4 @@
 ﻿using API_VariasBDs.DTOs;
-using API_VariasBDs.Models;
 using API_VariasBDs.Repositorios;
 using API_VariasBDs.Servicos.Abstracoes;
 
